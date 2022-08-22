@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 #coding=utf-8
 
+#Importando bibliotecas e módulos
 import rospy
 from controller import Supervisor
 
@@ -47,24 +48,25 @@ class HeadMover():
         if (self.general_supervisor.getTime() - self.last_run) > 0.7:
             self.moveHeadClock(self.req_dict[self.currentState] if self.currentState in self.req_dict.keys() else None)
 
+    #Atualização da flag
     def flagUpdate(self,message):
         self.currentState = message.currentState
-
+    #Definição de uma flag increment 
     def moveHeadClock(self, movement):
         if movement == RIGHT or movement == DOWN:
             increment = 1
         elif movement == LEFT or movement == UP:
             increment = -1
 
-        if movement == RIGHT or movement == LEFT:
+        if movement == RIGHT or movement == LEFT: #Movimentação da cabeça horizontalmente 
             increment *= hor_increment
             rotation = self.sim_hor_head_motor.getSFRotation()[:3]+[round(self.hor_head_pos+increment,2)]
             self.sim_hor_head_motor.setSFRotation(rotation)
-        elif movement == UP or movement == DOWN:
+        elif movement == UP or movement == DOWN: #Movimentação da cabeça verticalmente
             increment *= ver_increment
             rotation = self.sim_ver_head_motor.getSFRotation()[:3]+[round(self.ver_head_pos+increment,2)]
             self.sim_ver_head_motor.setSFRotation(rotation)
-        elif movement == CENTER:
+        elif movement == CENTER: #Posição da cabeça retorna ao centro 
             hor_rotation = self.sim_hor_head_motor.getSFRotation()[:3]+[0]
             ver_rotation = self.sim_ver_head_motor.getSFRotation()[:3]+[0.45]
             self.sim_hor_head_motor.setSFRotation(hor_rotation)

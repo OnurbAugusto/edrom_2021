@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 #coding=utf-8
 
+#Importanto as bibliotecas e módulos 
 import rospy
 import math as m
 from controller import Supervisor
@@ -47,20 +48,23 @@ class Robot3DMover():
         self.rotationUpdate()
         if (self.general_supervisor.getTime() - self.last_run) > 1:
             self.robot3DClock(self.req_dict[self.currentState] if self.currentState in self.req_dict.keys() else None)
-    
+    #Atualização da flag
     def flagUpdate(self,message):
         self.currentState = message.currentState
 
+    #Função de atualização da rotação dos motores
     def robot3DClock(self, movement):
-
+        #Definição do sentido de rotação
         if movement == CLOCKWISE:
             increment = -ROTATION_STEP
         elif movement == COUNTER_CLOCKWISE:
             increment = ROTATION_STEP
-        
+
+        #Rotação horária ou anti-horária
         if movement == CLOCKWISE or movement == COUNTER_CLOCKWISE:
             new_rotation = self.sim_3D_rotation_field.getSFRotation()[:3]+[self.robot_rotation+increment]
             self.sim_3D_rotation_field.setSFRotation(new_rotation)
+        #ANdar em linha reta 
         elif movement == FORWARD:
             x_increment = -WALK_STEP*m.sin(self.robot_rotation)
             z_increment = -WALK_STEP*m.cos(self.robot_rotation)
